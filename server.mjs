@@ -47,7 +47,13 @@ app.use((req, res, next) => {
     process.env.HOSTNAME = req.headers.host;
   }
   const protocol = /^localhost/.test(process.env.HOSTNAME) ? 'http' : 'https';
-  process.env.ORIGIN = `${protocol}://${process.env.HOSTNAME}`;
+  if (req.headers.referer) {  
+    process.env.ORIGIN = req.headers.referer.split('/').slice(0, 3).join('/');
+  }
+  else {
+    process.env.ORIGIN = `${protocol}://${process.env.HOSTNAME}`;
+  }
+  console.log('process.env.ORIGIN', process.env.ORIGIN);
   if (
     req.get('x-forwarded-proto') &&
     req.get('x-forwarded-proto').split(',')[0] !== 'https'

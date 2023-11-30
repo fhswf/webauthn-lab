@@ -340,7 +340,7 @@ router.post('/registerResponse', csrfCheck, sessionCheck, async (req, res) => {
   const username = req.session.username;
   const expectedChallenge = req.session.challenge;
   const expectedOrigin = getOrigin(req.get('User-Agent'));
-  const expectedRPID = process.env.HOSTNAME;
+  const expectedRPID = getRpId(req);
   const credId = req.body.id;
   const type = req.body.type;
 
@@ -436,7 +436,7 @@ router.post('/signinRequest', csrfCheck, async (req, res) => {
 
     const options = await generateAuthenticationOptions({
       timeout: TIMEOUT,
-      rpID: process.env.HOSTNAME,
+      rpID: getRpId(req),
       allowCredentials,
       /**
        * This optional value controls whether or not the authenticator needs be able to uniquely
@@ -471,7 +471,7 @@ router.post('/signinResponse', csrfCheck, async (req, res) => {
   const { body } = req;
   const expectedChallenge = req.session.challenge;
   const expectedOrigin = getOrigin(req.get('User-Agent'));
-  const expectedRPID = process.env.HOSTNAME;
+  const expectedRPID = getRpId(req);
 
   try {
     // Query the user
