@@ -296,7 +296,7 @@ router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
 
     const options = await generateRegistrationOptions({
       rpName: RP_NAME,
-      rpID: process.env.HOSTNAME,
+      rpID: getRpId(req),
       userID: user.id,
       userName: user.username,
       timeout: TIMEOUT,
