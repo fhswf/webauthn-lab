@@ -27,6 +27,7 @@ import { isoBase64URL } from '@simplewebauthn/server/helpers';
 
 import { Low } from 'lowdb';
 import { JSONFile } from 'lowdb/node'
+import { get } from 'http';
 
 const adapter = new JSONFile('.data/db.json');
 const db = new Low(adapter);
@@ -214,6 +215,19 @@ router.post('/removeKey', csrfCheck, sessionCheck, (req, res) => {
   return res.json({});
 });
 
+
+const getRpId = (req) => {
+  if (req.headers.referer) {
+    const url = new URL(req.headers.referer);
+    console.log('getRpId: %o', url.hostname);
+    return url.hostname; 
+  }
+  else {
+    console.log('getRpId: %o', process.env.HOSTNAME);
+    return process.env.HOSTNAME;
+  }
+}
+
 /**
  * Respond with required information to call navigator.credential.create()
  * Input is passed via `req.body` with similar format as output
@@ -247,6 +261,7 @@ router.post('/removeKey', csrfCheck, sessionCheck, (req, res) => {
  * }```
  **/
 router.post('/registerRequest', csrfCheck, sessionCheck, async (req, res) => {
+  console.log('registerRequest: %o %o', req.body, req.headers);
   const username = req.session.username;
   const user = Users.findByUsername(username);
   try {
